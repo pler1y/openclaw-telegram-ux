@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { Controller } from "../src/controller.js";
-import type { Settings } from "../src/config.js";
-import type { StoredTask, TaskStore } from "../src/store.js";
-import { TransportError, type MessageTransport } from "../src/telegram.js";
+import { Controller } from "../src/core/controller.js";
+import type { Settings } from "../src/openclaw/config.js";
+import type { StoredTask, TaskStore } from "../src/storage/task-store.js";
+import { TransportError, type MessageTransport } from "../src/telegram/transport.js";
 
 class MemoryStore implements TaskStore {
   constructor(public data: StoredTask[] = []) {}

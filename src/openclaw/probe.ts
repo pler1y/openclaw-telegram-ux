@@ -1,8 +1,8 @@
 import { join } from "node:path";
 import type { OpenClawPluginApi } from "openclaw/plugin-sdk/plugin-entry";
-import { Audit } from "./audit.js";
+import { Audit } from "../storage/audit.js";
 import { botTokenOf, chatIdOf, type Settings } from "./config.js";
-import { TelegramTransport, TransportError, type Route } from "./telegram.js";
+import { TelegramTransport, TransportError, type Route } from "../telegram/transport.js";
 
 type ProbeRun = { route: Route; sessionKey: string; runId?: string; inboundId?: string; messageId?: number; terminal: boolean; chain: Promise<void>; lastAt: number; lastText?: string; attempted?: boolean; ended?: boolean; delivered?: boolean };
 

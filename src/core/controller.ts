@@ -1,11 +1,11 @@
 import { randomUUID } from "node:crypto";
-import type { Evidence } from "./audit.js";
-import type { Settings } from "./config.js";
+import type { Evidence } from "../storage/audit.js";
+import type { Settings } from "../openclaw/config.js";
 import { Outbox } from "./outbox.js";
 import { initialState, isTerminal, render, transition, type SemanticEvent, type TaskState } from "./state.js";
-import type { StoredTask, TaskStore } from "./store.js";
-import { TransportError, type MessageTransport, type Route } from "./telegram.js";
-import { cleanProgress, type Preferences } from "./presentation.js";
+import type { StoredTask, TaskStore } from "../storage/task-store.js";
+import { TransportError, type MessageTransport, type Route } from "../telegram/transport.js";
+import { cleanProgress, type Preferences } from "../telegram/presentation.js";
 
 export interface Inbound { route: Route; sessionKey: string; inboundId: string; runId?: string }
 export interface Identity { runId?: string; sessionKey?: string; route?: Partial<Route> }

@@ -1,0 +1,26 @@
+{
+  "channels": {
+    "telegram": {
+      "accounts": {
+        "work": {
+          "streaming": { "mode": "off" }
+        }
+      }
+    }
+  },
+  "plugins": {
+    "entries": {
+      "openclaw-telegram-ux": {
+        "enabled": false,
+        "hooks": { "allowConversationAccess": true },
+        "config": {
+          "accountId": "work",
+          "allowedChatIds": ["YOUR_PRIVATE_CHAT_ID"],
+          "expectedBotUsername": "YOUR_BOT_USERNAME",
+          "language": "zh",
+          "progressStyle": "detailed"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,40 @@
+name: Bug report / 问题反馈
+description: Report a reproducible Telegram UX problem.
+title: "[Bug] "
+body:
+  - type: markdown
+    attributes:
+      value: "Please remove bot tokens, private messages, chat IDs, and configuration secrets before posting. 请先脱敏再提交。"
+  - type: input
+    id: versions
+    attributes:
+      label: Versions / 版本
+      description: Plugin version and OpenClaw version.
+      placeholder: "0.2.0-beta.1 / 2026.9.1"
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment / 环境
+      description: Operating system, Node.js version, and model if relevant. No hostnames or IP addresses are needed.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps and actual result / 复现步骤与实际结果
+      description: Include what you sent, what the status message did, and whether the native reply arrived. Use a safe test example.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result / 预期结果
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Sanitized evidence / 脱敏证据
+      description: Optional fixed error codes, anonymized events, or screenshots. Do not paste your full OpenClaw configuration.

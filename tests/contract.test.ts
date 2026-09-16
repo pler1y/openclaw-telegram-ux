@@ -38,7 +38,7 @@ describe("exact OpenClaw public contract", () => {
     expect(host.registerTool).toHaveBeenCalledTimes(["discovery", "tool-discovery"].includes(mode) ? 1 : 0);
   });
   it("imports only the documented narrow SDK entry and never starts a second receiver", async () => {
-    const files = await readdir(new URL("../src/", import.meta.url));
+    const files = await readdir(new URL("../src/", import.meta.url), { recursive: true });
     const sources = await Promise.all(files.filter(f => f.endsWith(".ts")).map(f => readFile(new URL(`../src/${f}`, import.meta.url), "utf8")));
     const code = sources.join("\n");
     const imports = [...code.matchAll(/from ["'](openclaw[^"']+)["']/g)].map(m => m[1]);

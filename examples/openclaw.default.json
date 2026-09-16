@@ -1,0 +1,19 @@
+{
+  "channels": {
+    "telegram": {
+      "streaming": { "mode": "off" }
+    }
+  },
+  "plugins": {
+    "entries": {
+      "openclaw-telegram-ux": {
+        "enabled": false,
+        "hooks": { "allowConversationAccess": true },
+        "config": {
+          "allowedChatIds": ["YOUR_PRIVATE_CHAT_ID"],
+          "expectedBotUsername": "YOUR_BOT_USERNAME"
+        }
+      }
+    }
+  }
+}

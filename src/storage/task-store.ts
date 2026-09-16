@@ -1,7 +1,7 @@
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import type { Phase } from "./state.js";
-import type { Route } from "./telegram.js";
+import type { Phase } from "../core/state.js";
+import type { Route } from "../telegram/transport.js";
 
 export interface StoredTask {
   id: string; route: Route; sessionKey: string; inboundId: string; runId?: string;

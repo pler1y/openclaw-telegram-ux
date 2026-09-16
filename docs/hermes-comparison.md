@@ -1,6 +1,6 @@
 # 与 Hermes Telegram UX 的逐项对照
 
-对照 Hermes 主线 1.8.3-rc.1 的功能说明（已发布基线 1.8.2）。本插件是独立实现，兼容 OpenClaw 2026.9.1。Hermes 主线通过运行时包装内部入口补足能力；这里仅使用第三方公开 SDK 与 Telegram 官方 Bot API，没有核心改动或内部方法替换。
+对照 [Hermes Telegram UX](https://github.com/pler1y/hermes-telegram-ux) 主线 1.8.3-rc.1 的功能说明（已发布基线 1.8.2）。本插件是独立实现，兼容 OpenClaw 2026.9.1。Hermes 主线通过运行时包装内部入口补足能力；这里仅使用第三方公开 SDK 与 Telegram 官方 Bot API，没有核心改动或内部方法替换。
 
 | 体验 | OpenClaw 0.2.0-beta.1 的实现与边界 | 验证 |
 | --- | --- | --- |
@@ -31,3 +31,5 @@
 | 安装与维护 | 标准 manifest、注册工具/命令/交互、固定 SDK、npm-pack 安装；无需修改核心 | 隔离生命周期、官方静态校验、GitHub CI |
 
 “实现了观察适配”不等于所有模型路径都触发事件。报告分别列出实机证据、模拟覆盖和缺少公开关联字段时的跳过行为。ClawHub 校验通过也不代表已被目录收录。
+
+对应的[版本验证记录](releases/0.2.0-beta.1-validation.md)与[公开接口证据](development/public-api.md)提供详细范围。

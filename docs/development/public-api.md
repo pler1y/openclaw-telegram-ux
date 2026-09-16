@@ -1,8 +1,10 @@
 # 公开接口证据（OpenClaw 2026.9.1）
 
+[架构](architecture.md) · [版本验证记录](../releases/0.2.0-beta.1-validation.md)
+
 依赖基准为官方 npm `openclaw@2026.9.1`、版本标记 `ad6fe23`。源代码只导入 `openclaw/plugin-sdk/plugin-entry`，没有 OpenClaw 私有模块、Telegram channel 内部实现或 core 修改。
 
-| 能力 | 公开接口与证据 | 目标机器实测 |
+| 能力 | 公开接口与证据 | 0.2.0-beta.1 验证 |
 | --- | --- | --- |
 | 插件定义、服务、命令 | [SDK entrypoints](https://github.com/openclaw/openclaw/blob/v2026.9.1/docs/plugins/sdk-entrypoints.md)，`definePluginEntry`、`registerService`、`registerCommand` 的官方类型 | 插件加载成功；`/tgux` 直接返回状态 |
 | 入站路由 | [Typed hooks](https://github.com/openclaw/openclaw/blob/v2026.9.1/docs/plugins/hooks.md)，`message_received` | 收到 accountId、conversationId、sessionKey、messageId；该路径未携带 runId |

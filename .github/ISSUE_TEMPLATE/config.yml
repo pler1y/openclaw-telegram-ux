@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation / 使用文档
+    url: https://github.com/pler1y/openclaw-telegram-ux/blob/main/docs/README.md
+    about: Installation, configuration, commands, and troubleshooting.

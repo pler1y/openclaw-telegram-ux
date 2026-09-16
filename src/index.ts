@@ -1,8 +1,8 @@
 import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
-import { settingsOf } from "./config.js";
-import { registerProbe } from "./probe.js";
-import { registerAdapter } from "./adapter.js";
-import { registerProgressTool } from "./progress-tool.js";
+import { settingsOf } from "./openclaw/config.js";
+import { registerProbe } from "./openclaw/probe.js";
+import { registerAdapter } from "./openclaw/adapter.js";
+import { registerProgressTool } from "./openclaw/progress-tool.js";
 
 export default definePluginEntry({
   id: "openclaw-telegram-ux",

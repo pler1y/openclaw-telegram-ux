@@ -8,13 +8,12 @@
     "dist",
     "openclaw.plugin.json",
     "README.md",
+    "README.en.md",
+    "CONTRIBUTING.md",
+    "CHANGELOG.md",
     "LICENSE",
-    "docs/PUBLIC-API.md",
-    "docs/COMPATIBILITY.md",
-    "docs/DEPLOYMENT.md",
-    "docs/FEATURES.md",
-    "docs/TEST-REPORT.md",
-    "docs/PUBLISHING.md",
+    "docs",
+    "examples",
     "scripts/rollback.py"
   ],
   "openclaw": {
@@ -38,11 +37,13 @@
     "openclaw": "2026.9.1"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.build.json && node scripts/build-info.mjs",
+    "build": "node scripts/clean.mjs && tsc -p tsconfig.build.json && node scripts/build-info.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "check": "npm run typecheck && npm test && npm run build",
-    "prepack": "npm run build"
+    "check": "npm run docs:check && npm run typecheck && npm test && npm run build",
+    "prepack": "npm run build",
+    "docs:check": "node scripts/check-docs.mjs",
+    "test:install": "node scripts/install-check.mjs"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",

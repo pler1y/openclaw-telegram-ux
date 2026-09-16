@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { initialState, render, transition, type SemanticEvent, type TaskState } from "../src/state.js";
+import { initialState, render, transition, type SemanticEvent, type TaskState } from "../src/core/state.js";
 
 const run = (...events: SemanticEvent[]) => events.reduce<TaskState>(transition, initialState());
 describe("task state machine", () => {

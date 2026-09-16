@@ -1,0 +1,26 @@
+name: Feature request / 功能建议
+description: Describe a Telegram experience you would like to improve.
+title: "[Feature] "
+body:
+  - type: markdown
+    attributes:
+      value: "This project uses public OpenClaw plugin APIs and the Telegram Bot API. Core patches and internal method replacement are outside its scope."
+  - type: textarea
+    id: need
+    attributes:
+      label: User need / 使用需求
+      description: What is difficult or missing in your Telegram workflow?
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Desired behavior / 期望体验
+      description: Describe what you would like to see or do, with a short example.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context / 补充信息
+      description: Alternatives or public API references are welcome when known, but are not required.

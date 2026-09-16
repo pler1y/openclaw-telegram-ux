@@ -1,10 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { Controller } from "../src/controller.js";
-import { settingsOf } from "../src/config.js";
-import { cleanProgress, isNativeStop, render } from "../src/presentation.js";
-import { initialState, transition, type SemanticEvent } from "../src/state.js";
-import type { StoredTask, TaskStore } from "../src/store.js";
-import { TransportError } from "../src/telegram.js";
+import { Controller } from "../src/core/controller.js";
+import { settingsOf } from "../src/openclaw/config.js";
+import { cleanProgress, isNativeStop, render } from "../src/telegram/presentation.js";
+import { initialState, transition, type SemanticEvent } from "../src/core/state.js";
+import type { StoredTask, TaskStore } from "../src/storage/task-store.js";
+import { TransportError } from "../src/telegram/transport.js";
 
 const settings = settingsOf({ allowedChatIds: ["123"], expectedBotUsername: "fixture_bot" });
 const route = { accountId: "default", chatId: "123" };

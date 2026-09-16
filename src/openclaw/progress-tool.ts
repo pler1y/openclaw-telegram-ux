@@ -1,9 +1,9 @@
 import { Type } from "typebox";
 import type { OpenClawPluginApi } from "openclaw/plugin-sdk/plugin-entry";
 import { chatIdOf, type Settings } from "./config.js";
-import type { Controller } from "./controller.js";
-import { textOf, type Preferences } from "./presentation.js";
-import type { Route } from "./telegram.js";
+import type { Controller } from "../core/controller.js";
+import { textOf, type Preferences } from "../telegram/presentation.js";
+import type { Route } from "../telegram/transport.js";
 
 export const PROGRESS_TOOL = "tgux_progress";
 

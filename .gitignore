@@ -2,7 +2,8 @@ node_modules/
 dist/
 artifacts/
 coverage/
+.DS_Store
+npm-debug.log*
 *.tgz
 .env*
 !.env.example
-

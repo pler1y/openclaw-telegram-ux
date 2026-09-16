@@ -2,11 +2,11 @@ import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { Interactions } from "../src/interactions.js";
-import { PreferenceStore } from "../src/preferences.js";
-import { settingsOf } from "../src/config.js";
-import type { Controller } from "../src/controller.js";
-import { TransportError, type Buttons, type MessageTransport } from "../src/telegram.js";
+import { Interactions } from "../src/telegram/interactions.js";
+import { PreferenceStore } from "../src/storage/preferences.js";
+import { settingsOf } from "../src/openclaw/config.js";
+import type { Controller } from "../src/core/controller.js";
+import { TransportError, type Buttons, type MessageTransport } from "../src/telegram/transport.js";
 
 const route = { accountId: "default", chatId: "123" };
 const settings = settingsOf({ allowedChatIds: ["123"], expectedBotUsername: "fixture_bot" });

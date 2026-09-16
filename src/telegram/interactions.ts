@@ -1,9 +1,9 @@
 import { randomBytes } from "node:crypto";
-import type { Controller } from "./controller.js";
-import { chatIdOf, type Settings } from "./config.js";
-import { PreferenceStore } from "./preferences.js";
+import type { Controller } from "../core/controller.js";
+import { chatIdOf, type Settings } from "../openclaw/config.js";
+import { PreferenceStore } from "../storage/preferences.js";
 import { textOf, VERSION, type Preferences } from "./presentation.js";
-import { TransportError, type Buttons, type MessageTransport, type Route } from "./telegram.js";
+import { TransportError, type Buttons, type MessageTransport, type Route } from "./transport.js";
 
 type Action = "status" | "help" | "zh" | "en" | "compact" | "detailed" | "explain" | "summary";
 type Lease = { nonce: string; route: Route; senderId: string; sessionKey: string; generation?: string; messageId?: number; expiresAt: number; callbacks: Set<string>; followup: boolean };

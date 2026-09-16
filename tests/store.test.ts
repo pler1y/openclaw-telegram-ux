@@ -2,7 +2,7 @@ import { mkdtemp, readFile, writeFile, stat } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { JsonTaskStore, type StoredTask } from "../src/store.js";
+import { JsonTaskStore, type StoredTask } from "../src/storage/task-store.js";
 
 const record: StoredTask = { id: "fixture", route: { accountId: "default", chatId: "123" }, sessionKey: "s1", inboundId: "2", phase: "thinking", createdAt: 1, updatedAt: 2, sendState: "sent", messageId: 9, settled: false };
 describe("minimal persistent state", () => {

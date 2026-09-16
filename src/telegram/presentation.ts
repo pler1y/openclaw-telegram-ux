@@ -1,4 +1,4 @@
-import type { Phase, TaskState } from "./state.js";
+import type { Phase, TaskState } from "../core/state.js";
 
 export type Language = "zh" | "en";
 export type ProgressStyle = "compact" | "detailed";

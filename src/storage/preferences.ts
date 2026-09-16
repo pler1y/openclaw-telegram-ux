@@ -1,7 +1,7 @@
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import type { Preferences } from "./presentation.js";
-import type { Route } from "./telegram.js";
+import type { Preferences } from "../telegram/presentation.js";
+import type { Route } from "../telegram/transport.js";
 
 export class PreferenceStore {
   private values = new Map<string, Preferences>();

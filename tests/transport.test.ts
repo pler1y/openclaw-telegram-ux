@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { TelegramTransport, TransportError } from "../src/telegram.js";
+import { TelegramTransport, TransportError } from "../src/telegram/transport.js";
 
 const route = { accountId: "default", chatId: "123" };
 function response(body: unknown) { return new Response(JSON.stringify(body)); }

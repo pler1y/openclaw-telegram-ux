@@ -1,13 +1,13 @@
 import { join } from "node:path";
 import type { OpenClawPluginApi } from "openclaw/plugin-sdk/plugin-entry";
-import { Audit } from "./audit.js";
+import { Audit } from "../storage/audit.js";
 import { botTokenOf, chatIdOf, type Settings } from "./config.js";
-import { Controller, type Identity } from "./controller.js";
-import { JsonTaskStore } from "./store.js";
-import { TelegramTransport } from "./telegram.js";
-import { PreferenceStore } from "./preferences.js";
-import { Interactions } from "./interactions.js";
-import { isNativeStop, textOf } from "./presentation.js";
+import { Controller, type Identity } from "../core/controller.js";
+import { JsonTaskStore } from "../storage/task-store.js";
+import { TelegramTransport } from "../telegram/transport.js";
+import { PreferenceStore } from "../storage/preferences.js";
+import { Interactions } from "../telegram/interactions.js";
+import { isNativeStop, textOf } from "../telegram/presentation.js";
 import { PROGRESS_TOOL, registerProgressTool } from "./progress-tool.js";
 
 /** Public SDK boundary. Observers return synchronously; transport runs in Controller's outbox. */

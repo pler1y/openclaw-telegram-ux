@@ -1,8 +1,12 @@
-name: Fixed OpenClaw contract
+name: CI
 on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
 jobs:
   check:
     runs-on: ubuntu-latest
+    env:
+      TGUX_ARTIFACTS_DIR: artifacts/check
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -11,10 +15,15 @@ jobs:
           cache: npm
       - run: npm ci --ignore-scripts --no-audit --no-fund
       - run: npm run check
-      - run: mkdir -p artifacts && npm pack --pack-destination artifacts
-      - run: curl --fail --location --retry 3 https://github.com/pler1y/openclaw-telegram-ux/releases/download/v0.1.0-beta.1/openclaw-telegram-ux-0.1.0-beta.1.tgz -o artifacts/baseline.tgz
-      - run: node scripts/install-check.mjs artifacts/openclaw-telegram-ux-0.2.0-beta.1.tgz artifacts/baseline.tgz
+      - run: mkdir -p artifacts/check && npm pack --pack-destination artifacts/check
+      - run: curl --fail --location --retry 3 https://github.com/pler1y/openclaw-telegram-ux/releases/download/v0.1.0-beta.1/openclaw-telegram-ux-0.1.0-beta.1.tgz -o artifacts/check/baseline.tgz
+      - name: Check installation, configuration examples, and rollback
+        run: |
+          package_version=$(node -p 'require("./package.json").version')
+          node scripts/install-check.mjs "artifacts/check/openclaw-telegram-ux-${package_version}.tgz" artifacts/check/baseline.tgz
       - uses: actions/upload-artifact@v4
         with:
           name: telegram-ux-beta
-          path: artifacts/
+          path: |
+            artifacts/check/openclaw-telegram-ux-*.tgz
+            artifacts/check/install-check.json

@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 import type { OpenClawPluginApi } from "openclaw/plugin-sdk/plugin-entry";
-import { registerProgressTool } from "../src/progress-tool.js";
-import { settingsOf } from "../src/config.js";
-import type { Controller } from "../src/controller.js";
+import { registerProgressTool } from "../src/openclaw/progress-tool.js";
+import { settingsOf } from "../src/openclaw/config.js";
+import type { Controller } from "../src/core/controller.js";
 
 type Registration = Parameters<OpenClawPluginApi["registerTool"]>[0];
 type Factory = Extract<Registration, (...args: never[]) => unknown>;
