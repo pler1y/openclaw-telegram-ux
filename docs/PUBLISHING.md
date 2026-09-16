@@ -1,0 +1,36 @@
+# 上架准备检查
+
+本项目仅发布 GitHub 预发布版本；尚未提交 ClawHub，未认定已经被官方收录。
+
+## 已完成的预检
+
+| 检查 | 结果与范围 |
+| --- | --- |
+| ClawHub CLI | 官方 clawhub 0.23.3 |
+| package validate | PASS，0 hard breakages、0 warnings、0 findings |
+| 校验目标 | 官方 npm 安装的 OpenClaw 2026.9.1，使用 --openclaw node_modules/openclaw |
+| 校验执行方式 | 官方默认静态检查；未把模拟 SDK capture 当成宿主实机验证 |
+| package publish --dry-run | 成功生成 code-plugin 发布计划、版本、GitHub 来源与精确提交；未上传 |
+| manifest / tool 归属 | 固定插件 ID，contracts.tools 声明 tgux_progress |
+| 兼容元数据 | compat.pluginApi 精确 2026.9.1、build.openclawVersion、安装最低版本门槛 |
+| 构建来源 | 安装包 dist/build-info.json 与 Release 的 provenance.json 记录精确提交 |
+| 安装路径 | 普通归档和官方 npm-pack 均通过；隔离升级、回滚和卸载通过 |
+| 源码与安装包检查 | 发布文件白名单；个人配置、草稿、服务器备份、真实消息 ID 和私密日志不打包 |
+| CI | GitHub Actions 执行类型、测试、构建与安装生命周期 |
+
+命令可复现：
+
+```sh
+npm exec --yes --package=clawhub@0.23.3 -- clawhub package validate . --out artifacts/inspector --openclaw node_modules/openclaw
+npm exec --yes --package=clawhub@0.23.3 -- clawhub package publish . --family code-plugin --dry-run --source-repo pler1y/openclaw-telegram-ux --source-ref v0.2.0-beta.1 --json
+```
+
+应在已提交的干净源码上构建，并核对输出提交与发布标签一致。SDK 属于实验接口，扩展兼容版本需单独验证。工具校验不是审核通过的承诺。
+
+## 正式提交前仍需处理
+
+- 核实实际 ClawHub 发布者身份、包名和命名空间；本轮没有假定任何发布账号归属。
+- 明确执行正式发布授权，选择认证或可信发布流程。
+- 正式上传之后的服务端扫描、审核与收录结果只能在提交后确认。
+
+依据：[官方发布要求](https://docs.openclaw.ai/clawhub/publishing)、[插件校验修复说明](https://docs.openclaw.ai/clawhub/plugin-validation-fixes)。

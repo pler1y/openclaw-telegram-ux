@@ -14,6 +14,7 @@
     "docs/DEPLOYMENT.md",
     "docs/FEATURES.md",
     "docs/TEST-REPORT.md",
+    "docs/PUBLISHING.md",
     "scripts/rollback.py"
   ],
   "openclaw": {

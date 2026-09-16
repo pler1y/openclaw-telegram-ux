@@ -22,8 +22,8 @@ for name in ["events.previous.jsonl", "events.jsonl"]:
 start = next((i for i, e in enumerate(events) if e.get("event") == "ready"), len(events))
 maps = {key: {} for key in ["chatId", "sessionKey", "runId", "inboundId", "messageId", "threadId"]}
 allowed = {"ready", "received", "created", "run_bound", "thinking", "tool_start", "tool_end", "organizing", "approval", "supplement", "supplement_received", "finish", "native_delivery", "delivered", "close_success", "deleted", "edited", "cancel", "orphan", "timeout", "transport_error", "ambiguous_inbound_skipped"}
+allowed.update({"progress", "compaction", "child_start", "child_end", "public_hook", "menu_created", "menu_updated", "menu_update_failed", "callback_rejected", "followup_submitted"})
 for e in events[start:]:
-    allowed.update({"progress", "compaction", "child_start", "child_end", "menu_created", "menu_updated", "menu_update_failed", "callback_rejected", "followup_submitted"})
     if e.get("event") not in allowed or e["at"] < args.since:
         continue
     result = {"at": datetime.datetime.fromtimestamp(e["at"] / 1000, datetime.timezone.utc).isoformat(timespec="milliseconds"), "event": e["event"]}
