@@ -1,20 +1,74 @@
 {
   "id": "openclaw-telegram-ux",
   "name": "OpenClaw Telegram UX",
-  "description": "即时中文回执与单条任务进度",
-  "version": "0.1.0-beta.1",
-  "activation": { "onStartup": true },
+  "description": "Telegram 私聊回执、具体进度、双语与交互菜单",
+  "version": "0.2.0-beta.1",
+  "activation": {
+    "onStartup": true
+  },
   "configSchema": {
     "type": "object",
     "additionalProperties": false,
-    "required": ["allowedChatIds", "expectedBotUsername"],
+    "required": [
+      "allowedChatIds",
+      "expectedBotUsername"
+    ],
     "properties": {
-      "mode": { "type": "string", "enum": ["probe", "active"], "default": "active" },
-      "accountId": { "type": "string", "default": "default" },
-      "allowedChatIds": { "type": "array", "minItems": 1, "items": { "type": "string", "pattern": "^[0-9]+$" } },
-      "expectedBotUsername": { "type": "string", "minLength": 1 },
-      "editIntervalMs": { "type": "integer", "minimum": 1000, "default": 1500 },
-      "statusTimeoutMs": { "type": "integer", "minimum": 60000, "default": 1800000 }
+      "mode": {
+        "type": "string",
+        "enum": [
+          "probe",
+          "active"
+        ],
+        "default": "active"
+      },
+      "accountId": {
+        "type": "string",
+        "default": "default"
+      },
+      "allowedChatIds": {
+        "type": "array",
+        "minItems": 1,
+        "items": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        }
+      },
+      "expectedBotUsername": {
+        "type": "string",
+        "minLength": 1
+      },
+      "editIntervalMs": {
+        "type": "integer",
+        "minimum": 1000,
+        "default": 1500
+      },
+      "statusTimeoutMs": {
+        "type": "integer",
+        "minimum": 60000,
+        "default": 1800000
+      },
+      "language": {
+        "type": "string",
+        "enum": [
+          "zh",
+          "en"
+        ],
+        "default": "zh"
+      },
+      "progressStyle": {
+        "type": "string",
+        "enum": [
+          "compact",
+          "detailed"
+        ],
+        "default": "detailed"
+      }
     }
+  },
+  "contracts": {
+    "tools": [
+      "tgux_progress"
+    ]
   }
 }

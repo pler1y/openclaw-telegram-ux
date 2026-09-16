@@ -6,7 +6,21 @@
 
 将目标账号的 `channels.telegram.streaming.mode` 改为 `off`，避免重复进度。其他模型、认证、记忆、工具、浏览器和消息队列设置保持不变。使用现有服务管理方式重启 Gateway。
 
-## 服务器上的回滚命令
+## 回滚到已验收基线
+
+升级前备份配置、安装目录和插件状态。在空闲时执行，示例路径替换为实际备份位置。先恢复插件自己的旧配置，再安装基线，保持模型等其他配置不变：
+
+```sh
+python3 ~/.openclaw/extensions/openclaw-telegram-ux/scripts/rollback.py --backup /path/to/openclaw.json.before --restore-plugin-config
+openclaw plugins install ./openclaw-telegram-ux-0.1.0-beta.1.tgz --force --accept-capabilities
+openclaw plugins enable openclaw-telegram-ux
+openclaw config validate
+systemctl --user restart openclaw-gateway.service
+```
+
+基线从 GitHub 的 `v0.1.0-beta.1` Release 获取并核对该 Release 的 SHA256SUMS。不要把增强版新增设置直接交给旧版 schema。基线会忽略独立的 preferences.json；无需删除用户偏好或历史证据。
+
+## 恢复原生交互
 
 安装包包含回滚脚本。以下路径为示例，替换为实际状态目录和安装前备份：
 

@@ -7,6 +7,8 @@ export interface Settings {
   expectedBotUsername: string;
   editIntervalMs: number;
   statusTimeoutMs: number;
+  language?: "zh" | "en";
+  progressStyle?: "compact" | "detailed";
 }
 
 export function settingsOf(value: Record<string, unknown> = {}): Settings {
@@ -20,6 +22,8 @@ export function settingsOf(value: Record<string, unknown> = {}): Settings {
     expectedBotUsername: value.expectedBotUsername,
     editIntervalMs: Math.max(1_000, Number(value.editIntervalMs) || 1_500),
     statusTimeoutMs: Math.max(60_000, Number(value.statusTimeoutMs) || 1_800_000),
+    language: value.language === "en" ? "en" : "zh",
+    progressStyle: value.progressStyle === "compact" ? "compact" : "detailed",
   };
 }
 

@@ -12,7 +12,8 @@ jobs:
       - run: npm ci --ignore-scripts --no-audit --no-fund
       - run: npm run check
       - run: mkdir -p artifacts && npm pack --pack-destination artifacts
-      - run: node scripts/install-check.mjs
+      - run: curl --fail --location --retry 3 https://github.com/pler1y/openclaw-telegram-ux/releases/download/v0.1.0-beta.1/openclaw-telegram-ux-0.1.0-beta.1.tgz -o artifacts/baseline.tgz
+      - run: node scripts/install-check.mjs artifacts/openclaw-telegram-ux-0.2.0-beta.1.tgz artifacts/baseline.tgz
       - uses: actions/upload-artifact@v4
         with:
           name: telegram-ux-beta

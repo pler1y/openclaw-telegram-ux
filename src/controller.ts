@@ -5,6 +5,7 @@ import { Outbox } from "./outbox.js";
 import { initialState, isTerminal, render, transition, type SemanticEvent, type TaskState } from "./state.js";
 import type { StoredTask, TaskStore } from "./store.js";
 import { TransportError, type MessageTransport, type Route } from "./telegram.js";
+import { cleanProgress, type Preferences } from "./presentation.js";
 
 export interface Inbound { route: Route; sessionKey: string; inboundId: string; runId?: string }
 export interface Identity { runId?: string; sessionKey?: string; route?: Partial<Route> }
@@ -26,7 +27,10 @@ export class Controller {
   private accepting = false;
   private sweeper?: ReturnType<typeof setInterval>;
   private failures = 0;
-  constructor(private readonly settings: Settings, private readonly transport: MessageTransport, private readonly store: TaskStore, private readonly audit: AuditWriter) {
+  private progressCalls = new Map<string, string>();
+  private childOwners = new Map<string, { taskId: string; sessionKey: string }>();
+  private pendingActions = new Set<(error: Error) => void>();
+  constructor(private readonly settings: Settings, private readonly transport: MessageTransport, private readonly store: TaskStore, private readonly audit: AuditWriter, private readonly preferences?: (route: Route) => Preferences) {
     this.outbox = new Outbox(settings.editIntervalMs);
   }
 
@@ -52,6 +56,10 @@ export class Controller {
   }
 
   private inboundKey(r: Inbound): string { return `${conversationOf(r.route, r.sessionKey)}:${r.inboundId}`; }
+  private display(t: Task): string | null {
+    const prefs = this.preferences?.(t.route);
+    return render(t.state, prefs && { ...prefs, elapsedMs: Date.now() - t.createdAt, idleMs: Date.now() - t.updatedAt });
+  }
   private log(event: string, t: Task, extra: Partial<Evidence> = {}): void {
     this.audit({ event, sessionKey: t.sessionKey, runId: t.runId, ...t.route, inboundId: t.inboundId, messageId: t.messageId, phase: t.phase, ...extra });
   }
@@ -114,6 +122,78 @@ export class Controller {
     this.apply(t, event);
   }
 
+  trackProgressCall(identity: Identity, callId: string): void {
+    if (!this.accepting || !identity.runId) return;
+    const t = this.resolve(identity);
+    if (!t || t.state.ended || isTerminal(t.phase)) return;
+    const previous = this.progressCalls.get(callId);
+    // A reused call id is never re-bound to a later task.
+    if (previous && previous !== t.id) { this.progressCalls.set(callId, "invalid"); return; }
+    if (!previous && this.progressCalls.size >= 10_000) return;
+    this.progressCalls.set(callId, t.id);
+  }
+
+  progressFromTool(callId: string, identity: Identity, value: unknown): boolean {
+    if (!this.accepting || !identity.sessionKey || !identity.route?.chatId || !identity.route.accountId) return false;
+    const owner = this.progressCalls.get(callId);
+    const t = owner ? this.tasks.get(owner) : undefined;
+    const text = cleanProgress(value);
+    if (!t || !text || t.state.ended || isTerminal(t.phase) || t.sessionKey !== identity.sessionKey || !matchesRoute(t.route, identity.route)) return false;
+    this.progressCalls.set(callId, "closed");
+    this.apply(t, { type: "progress", text });
+    return true;
+  }
+
+  childStarted(parent: Identity & { inboundId?: string }, child: { runId: string; sessionKey: string }): void {
+    if (!this.accepting || this.childOwners.has(child.runId)) return;
+    const candidates = [...this.tasks.values()].filter(t => !isTerminal(t.phase) && !t.state.ended
+      && matchesRoute(t.route, parent.route) && (!parent.sessionKey || parent.sessionKey === t.sessionKey)
+      && (!parent.inboundId || t.inboundId === parent.inboundId || t.inboundIds?.includes(parent.inboundId)));
+    if ((!parent.sessionKey && !(parent.route?.chatId && parent.inboundId)) || candidates.length !== 1) return;
+    const t = candidates[0]!;
+    this.childOwners.set(child.runId, { taskId: t.id, sessionKey: child.sessionKey });
+    this.apply(t, { type: "child_start", id: child.runId });
+  }
+
+  childEnded(child: { runId?: string; sessionKey: string }, outcome: "ok" | "error" | "timeout" | "killed" | "unknown"): void {
+    if (!this.accepting) return;
+    const owners = [...this.childOwners].filter(([runId, owner]) => (!child.runId || child.runId === runId) && child.sessionKey === owner.sessionKey);
+    if (owners.length !== 1) return;
+    const [runId, owner] = owners[0]!;
+    const t = this.tasks.get(owner.taskId);
+    if (!t || isTerminal(t.phase) || t.state.children[runId] !== "running") return;
+    this.apply(t, { type: "child_end", id: runId, outcome });
+  }
+
+  view(route: Route, sessionKey?: string): { active: number; generation?: string; ready: boolean } {
+    const candidates = [...this.tasks.values()].filter(t => matchesRoute(t.route, route) && (!sessionKey || t.sessionKey === sessionKey));
+    return { active: candidates.filter(t => !isTerminal(t.phase)).length, generation: candidates.at(-1)?.id, ready: this.accepting };
+  }
+
+  refresh(route: Route): void {
+    for (const t of this.tasks.values()) if (matchesRoute(t.route, route) && !isTerminal(t.phase)) this.schedule(t);
+  }
+
+  preferencesForSession(sessionKey: string): Preferences | undefined {
+    const t = this.resolve({ sessionKey });
+    return t && !t.state.ended ? this.preferences?.(t.route) : undefined;
+  }
+
+  dispatch<T>(route: Route, work: () => Promise<T>): Promise<T> {
+    if (!this.accepting) return Promise.reject(new Error("tgux_not_ready"));
+    return new Promise<T>((resolve, reject) => {
+      this.pendingActions.add(reject);
+      this.outbox.enqueue(laneOf(route), `action:${randomUUID()}`, async () => {
+        try { if (!this.accepting) throw new Error("tgux_not_ready"); resolve(await work()); }
+        catch (error) {
+          if (error instanceof TransportError && error.kind === "rate_limit") this.outbox.pause(error.retryAfterMs);
+          reject(new Error("tgux_action_unavailable"));
+        }
+        finally { this.pendingActions.delete(reject); }
+      });
+    });
+  }
+
   finalIntent(identity: Identity): void { const t = this.resolve(identity); if (t) t.finalIntent = true; }
 
   delivered(identity: Identity, success: boolean, messageId?: number): void {
@@ -125,12 +205,14 @@ export class Controller {
   }
 
   private apply(t: Task, event: SemanticEvent): void {
-    const before = render(t.state);
+    const before = this.display(t);
     t.state = transition(t.state, event);
     t.phase = t.state.phase;
     t.updatedAt = Date.now();
     if (event.type === "finish" && event.result === "success") t.finishedAt ??= Date.now();
-    if (before !== render(t.state) || event.type === "finish") {
+    if (event.type === "child_end" && t.state.ended) t.finishedAt = Date.now();
+    if (isTerminal(t.phase)) for (const [callId, owner] of this.progressCalls) if (owner === t.id) this.progressCalls.set(callId, "closed");
+    if (before !== this.display(t) || ["finish", "progress", "child_start", "child_end", "compaction"].includes(event.type)) {
       this.log(event.type, t);
       this.save(); this.schedule(t);
     }
@@ -142,7 +224,7 @@ export class Controller {
   }
 
   private async publish(t: Task): Promise<void> {
-    let text = render(t.state);
+    const text = this.display(t);
     const phase = t.phase;
     if (t.settled || t.sendState === "muted") return;
     try {
@@ -156,12 +238,12 @@ export class Controller {
         t.sendState = "sent"; t.lastText = text;
         this.log("created", t, { phase });
         this.save(); await this.store.flush();
-        if (render(t.state) !== text) this.schedule(t);
+        if (this.display(t) !== text) this.schedule(t);
       } else if (text !== t.lastText) {
         if (text === null) { await this.transport.delete(t.route, t.messageId); this.log("deleted", t, { phase }); }
         else { await this.transport.edit(t.route, t.messageId, text); this.log("edited", t, { phase }); }
         t.lastText = text;
-        if (render(t.state) !== text) this.schedule(t);
+        if (this.display(t) !== text) this.schedule(t);
         else if (isTerminal(t.phase)) t.settled = true;
         t.attempts = 0;
         this.save();
@@ -172,8 +254,8 @@ export class Controller {
       this.log("transport_error", t, { kind: error instanceof TransportError && error.networkCode ? `${kind}/${error.networkCode}` : kind });
       if (kind === "unchanged") {
         t.lastText = text;
-        if (isTerminal(t.phase) && render(t.state) === text) t.settled = true;
-        else if (render(t.state) !== text) this.schedule(t);
+        if (isTerminal(t.phase) && this.display(t) === text) t.settled = true;
+        else if (this.display(t) !== text) this.schedule(t);
       } else if (kind === "gone") { t.sendState = "muted"; t.settled = true; }
       else if (error instanceof TransportError && (kind === "rate_limit" || kind === "connect_failed") && t.attempts < 4) {
         if (t.messageId === undefined) t.sendState = "new";
@@ -200,10 +282,12 @@ export class Controller {
       // Some native media paths emit a successful lifecycle end but no
       // message_sent hook. Close only that proven successful run after a grace
       // window; do not infer delivery, associate another run, or resend content.
-      if (!isTerminal(t.phase) && t.state.ended && t.finishedAt !== undefined && now - t.finishedAt >= 5_000) this.apply(t, { type: "close_success" });
+      if (!isTerminal(t.phase) && t.state.ended && !Object.values(t.state.children).includes("running") && t.finishedAt !== undefined && now - t.finishedAt >= 5_000) this.apply(t, { type: "close_success" });
       if (!isTerminal(t.phase) && now - t.updatedAt > this.settings.statusTimeoutMs) this.apply(t, { type: "timeout" });
+      if (!isTerminal(t.phase) && this.display(t) !== t.lastText) this.schedule(t);
       if (isTerminal(t.phase) && t.settled && now - t.updatedAt > 86_400_000) this.tasks.delete(t.id);
     }
+    for (const [key, owner] of this.childOwners) if (!this.tasks.has(owner.taskId)) this.childOwners.delete(key);
     for (const [key, at] of this.seenInbound) if (now - at > 86_400_000) this.seenInbound.delete(key);
   }
 
@@ -213,6 +297,8 @@ export class Controller {
   async stop(): Promise<void> {
     this.accepting = false; clearInterval(this.sweeper);
     this.cleanup(); await this.outbox.drain(); this.outbox.halt(); await this.store.flush();
+    for (const reject of this.pendingActions) reject(new Error("tgux_not_ready"));
+    this.pendingActions.clear(); this.progressCalls.clear(); this.childOwners.clear();
   }
   async idle(timeoutMs?: number): Promise<void> { await this.outbox.drain(timeoutMs); await this.store.flush(); }
 }

@@ -4,9 +4,10 @@ export interface Route {
   threadId?: number;
 }
 
+export type Buttons = Array<Array<{ text: string; callback_data: string }>>;
 export interface MessageTransport {
-  create(route: Route, text: string): Promise<number>;
-  edit(route: Route, messageId: number, text: string): Promise<void>;
+  create(route: Route, text: string, buttons?: Buttons): Promise<number>;
+  edit(route: Route, messageId: number, text: string, buttons?: Buttons): Promise<void>;
   delete(route: Route, messageId: number): Promise<void>;
 }
 
@@ -72,10 +73,11 @@ export class TelegramTransport implements MessageTransport {
     return { id: result.id, username: result.username };
   }
 
-  async create(route: Route, text: string): Promise<number> {
+  async create(route: Route, text: string, buttons?: Buttons): Promise<number> {
     const result = await this.call("sendMessage", {
       chat_id: route.chatId, message_thread_id: route.threadId,
       text, disable_notification: true, link_preview_options: { is_disabled: true },
+      ...(buttons ? { reply_markup: { inline_keyboard: buttons } } : {}),
     });
     if (!result || typeof result !== "object" || !("message_id" in result) || typeof result.message_id !== "number") {
       throw new TransportError("uncertain");
@@ -83,8 +85,8 @@ export class TelegramTransport implements MessageTransport {
     return result.message_id;
   }
 
-  async edit(route: Route, messageId: number, text: string): Promise<void> {
-    await this.call("editMessageText", { chat_id: route.chatId, message_id: messageId, text, link_preview_options: { is_disabled: true } });
+  async edit(route: Route, messageId: number, text: string, buttons?: Buttons): Promise<void> {
+    await this.call("editMessageText", { chat_id: route.chatId, message_id: messageId, text, link_preview_options: { is_disabled: true }, ...(buttons ? { reply_markup: { inline_keyboard: buttons } } : {}) });
   }
 
   async delete(route: Route, messageId: number): Promise<void> {

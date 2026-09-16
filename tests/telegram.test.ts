@@ -5,6 +5,15 @@ const route = { accountId: "default", chatId: "123" };
 function response(body: unknown) { return new Response(JSON.stringify(body)); }
 
 describe("Telegram official transport", () => {
+  it("attaches controls only to plugin-owned messages through official markup", async () => {
+    const fetcher = vi.fn<typeof fetch>().mockImplementation(async () => response({ ok: true, result: { message_id: 42 } }));
+    const transport = new TelegramTransport("123:fixture", fetcher);
+    const buttons = [[{ text: "帮助", callback_data: "tgux:fixture:help" }]];
+    await transport.create(route, "菜单", buttons);
+    await transport.edit(route, 42, "Menu", []);
+    expect(JSON.parse(String(fetcher.mock.calls[0]?.[1]?.body)).reply_markup).toEqual({ inline_keyboard: buttons });
+    expect(JSON.parse(String(fetcher.mock.calls[1]?.[1]?.body))).toMatchObject({ message_id: 42, reply_markup: { inline_keyboard: [] } });
+  });
   it("uses one token only in the official URL and returns the owned message id", async () => {
     const fetcher = vi.fn<typeof fetch>().mockResolvedValue(response({ ok: true, result: { message_id: 42 } }));
     const transport = new TelegramTransport("123:fixture", fetcher);

@@ -1,4 +1,4 @@
-export type Phase = "received" | "thinking" | "searching" | "tool" | "organizing" | "approval" | "completed" | "failed" | "cancelled" | "orphaned" | "timeout";
+export type Phase = "received" | "thinking" | "searching" | "tool" | "organizing" | "approval" | "compacting" | "background" | "completed" | "failed" | "cancelled" | "orphaned" | "timeout";
 export type SemanticEvent =
   | { type: "thinking" }
   | { type: "tool_start"; id: string; search: boolean }
@@ -6,6 +6,10 @@ export type SemanticEvent =
   | { type: "organizing" }
   | { type: "approval"; waiting: boolean }
   | { type: "supplement" }
+  | { type: "progress"; text: string }
+  | { type: "compaction"; active: boolean }
+  | { type: "child_start"; id: string }
+  | { type: "child_end"; id: string; outcome: "ok" | "error" | "timeout" | "killed" | "unknown" }
   | { type: "finish"; result: "success" | "failed" | "cancelled" }
   | { type: "delivered"; final: boolean; success: boolean }
   | { type: "close_success" }
@@ -19,10 +23,14 @@ export interface TaskState {
   supplemented: boolean;
   ended: boolean;
   delivered: boolean;
+  progressText?: string;
+  compacting: boolean;
+  waitingApproval: boolean;
+  children: Record<string, "running" | "ok" | "error" | "timeout" | "killed" | "unknown">;
 }
 
 export function initialState(): TaskState {
-  return { phase: "received", tools: {}, finishedTools: [], hadTools: false, supplemented: false, ended: false, delivered: false };
+  return { phase: "received", tools: {}, finishedTools: [], hadTools: false, supplemented: false, ended: false, delivered: false, compacting: false, waitingApproval: false, children: {} };
 }
 
 export function isTerminal(phase: Phase): boolean {
@@ -30,12 +38,12 @@ export function isTerminal(phase: Phase): boolean {
 }
 
 function toolPhase(s: TaskState): Phase {
-  return Object.values(s.tools).some(Boolean) ? "searching" : Object.keys(s.tools).length ? "tool" : s.hadTools ? "organizing" : "thinking";
+  return s.waitingApproval ? "approval" : s.compacting ? "compacting" : s.ended && Object.values(s.children).includes("running") ? "background" : Object.values(s.tools).some(Boolean) ? "searching" : Object.keys(s.tools).length ? "tool" : s.hadTools || s.ended ? "organizing" : "thinking";
 }
 
 export function transition(previous: TaskState, event: SemanticEvent): TaskState {
   if (isTerminal(previous.phase)) return previous;
-  const s: TaskState = { ...previous, tools: { ...previous.tools }, finishedTools: [...previous.finishedTools] };
+  const s: TaskState = { ...previous, tools: { ...previous.tools }, finishedTools: [...previous.finishedTools], children: { ...previous.children } };
   switch (event.type) {
     case "thinking": if (!s.ended && s.phase !== "approval") s.phase = toolPhase(s); break;
     case "tool_start":
@@ -47,21 +55,30 @@ export function transition(previous: TaskState, event: SemanticEvent): TaskState
       s.hadTools = true;
       if (!s.ended) s.phase = toolPhase(s);
       break;
-    case "organizing": if (!Object.keys(s.tools).length) s.phase = "organizing"; break;
-    case "approval": s.phase = event.waiting ? "approval" : toolPhase(s); break;
+    case "organizing": if (!Object.keys(s.tools).length && !s.waitingApproval && !s.compacting) s.phase = s.ended ? toolPhase(s) : "organizing"; break;
+    case "approval": s.waitingApproval = event.waiting; s.phase = toolPhase(s); break;
     case "supplement": s.supplemented = true; break;
+    case "progress": if (!s.ended) s.progressText = event.text; break;
+    case "compaction": if (!s.ended) { s.compacting = event.active; s.phase = toolPhase(s); } break;
+    case "child_start": if (!s.ended && !s.children[event.id]) s.children[event.id] = "running"; break;
+    case "child_end":
+      if (s.children[event.id] !== "running") break;
+      s.children[event.id] = event.outcome;
+      if (s.ended) { s.delivered = false; s.phase = toolPhase(s); }
+      break;
     case "finish":
       s.ended = true;
       s.tools = {};
-      s.phase = event.result === "success" ? (s.delivered ? "completed" : "organizing") : event.result;
+      s.compacting = false; s.waitingApproval = false;
+      s.phase = event.result === "success" ? (Object.values(s.children).includes("running") ? "background" : s.delivered ? "completed" : "organizing") : event.result;
       break;
     case "delivered":
       // A commentary message is not evidence that the final answer was delivered.
       if (event.final && event.success) s.delivered = true;
-      if (s.ended && s.delivered) s.phase = "completed";
+      if (s.ended && s.delivered && !Object.values(s.children).includes("running")) s.phase = "completed";
       if (s.ended && event.final && !event.success) s.phase = "failed";
       break;
-    case "close_success": if (s.ended) s.phase = "completed"; break;
+    case "close_success": if (s.ended && !Object.values(s.children).includes("running")) s.phase = "completed"; break;
     case "cancel": s.phase = "cancelled"; break;
     case "orphan": s.phase = "orphaned"; break;
     case "timeout": s.phase = "timeout"; break;
@@ -69,23 +86,4 @@ export function transition(previous: TaskState, event: SemanticEvent): TaskState
   return s;
 }
 
-const LABELS: Record<Phase, string> = {
-  received: "收到，正在处理…",
-  thinking: "正在思考…",
-  searching: "正在搜索资料…",
-  tool: "正在执行工具…",
-  organizing: "正在整理结果…",
-  approval: "正在等待你的批准。",
-  completed: "处理完成。",
-  failed: "本次任务未能完成，请查看机器人回复。",
-  cancelled: "已停止。",
-  orphaned: "服务已重启或状态跟踪已结束。本次进度不再更新。",
-  timeout: "等待时间较长，状态跟踪已结束。可使用 /status 查看任务。",
-};
-
-export function render(s: TaskState): string | null {
-  if (s.phase === "completed") return null;
-  const extra = s.supplemented && !isTerminal(s.phase) ? "\n补充已收到。" : "";
-  const count = Object.keys(s.tools).length;
-  return LABELS[s.phase] + (count > 1 && (s.phase === "tool" || s.phase === "searching") ? `（${count} 项）` : "") + extra;
-}
+export { render } from "./presentation.js";

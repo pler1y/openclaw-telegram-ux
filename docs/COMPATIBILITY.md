@@ -12,7 +12,9 @@
 | 补充与停止 | 保留原生 steer/stop；显示收件和明确取消终态 |
 | 重启 | 已知 messageId 收尾；不重建旧任务，不重发不确定的 send |
 
-依赖锁在 package-lock.json，peerDependency 精确固定 `2026.9.1`。CI 运行类型检查、Vitest、构建、打包和隔离安装生命周期。CI 文件已提供；没有进行远端推送或托管 CI 运行。
+依赖锁在 package-lock.json，peerDependency 与 `openclaw.compat.pluginApi` 精确固定 `2026.9.1`，`openclaw.build.openclawVersion` 声明构建宿主版本。安装包 `dist/build-info.json` 记录构建的 Git 提交。最低宿主版本字段是安装门槛，不代表兼容所有后续版本。
+
+GitHub CI 运行类型检查、Vitest、构建、打包、官方 `npm-pack:` 安装和基线升级/回滚生命周期。基线标签永久保留。增强版沿用原配置，新增语言与显示方式默认中文、详细；旧状态文件只收尾，不恢复旧任务。
 
 升级步骤：在隔离目录更换指定版本 → 编译公开 SDK 类型 → 运行契约与生命周期测试 → 用测试私聊验证 Agent stream 和发送成功事件 → 更新兼容声明后部署。不能仅放宽 peerDependency。
 

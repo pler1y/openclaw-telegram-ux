@@ -30,7 +30,7 @@ export class JsonTaskStore implements TaskStore {
           || !r.route || typeof r.route.accountId !== "string" || !/^[0-9]+$/.test(r.route.chatId)
           || !Number.isFinite(r.createdAt) || !Number.isFinite(r.updatedAt)
           || !["new", "attempted", "sent", "muted"].includes(r.sendState ?? "")
-          || !["received", "thinking", "searching", "tool", "organizing", "approval", "completed", "failed", "cancelled", "orphaned", "timeout"].includes(r.phase ?? "")) return [];
+          || !["received", "thinking", "searching", "tool", "organizing", "approval", "compacting", "background", "completed", "failed", "cancelled", "orphaned", "timeout"].includes(r.phase ?? "")) return [];
         return [{
           id: r.id, route: { accountId: r.route.accountId, chatId: r.route.chatId,
             threadId: Number.isSafeInteger(r.route.threadId) && r.route.threadId! > 0 ? r.route.threadId : undefined },
