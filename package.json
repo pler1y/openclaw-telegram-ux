@@ -1,0 +1,46 @@
+{
+  "name": "openclaw-telegram-ux",
+  "version": "0.1.0-beta.1",
+  "description": "Chinese Telegram task feedback for OpenClaw",
+  "type": "module",
+  "license": "MIT",
+  "files": [
+    "dist",
+    "openclaw.plugin.json",
+    "README.md",
+    "LICENSE",
+    "docs/PUBLIC-API.md",
+    "docs/COMPATIBILITY.md",
+    "docs/DEPLOYMENT.md",
+    "docs/FEATURES.md",
+    "docs/TEST-REPORT.md",
+    "scripts/rollback.py"
+  ],
+  "openclaw": {
+    "extensions": [
+      "./dist/index.js"
+    ]
+  },
+  "engines": {
+    "node": ">=24.16.0"
+  },
+  "peerDependencies": {
+    "openclaw": "2026.9.1"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "check": "npm run typecheck && npm test && npm run build",
+    "prepack": "npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "openclaw": "2026.9.1",
+    "typescript": "^5.9.0",
+    "vitest": "^3.2.0"
+  },
+  "dependencies": {
+    "undici": "8.10.0"
+  }
+}
