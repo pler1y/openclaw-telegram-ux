@@ -10,7 +10,11 @@
 
 OpenClaw Telegram UX 是一个社区插件，在 Telegram 私聊中提供即时回执和持续更新的任务状态。进度集中在同一个气泡里，完成后自动收起，答案和附件照常由 OpenClaw 发送。
 
-[下载安装包](https://github.com/pler1y/openclaw-telegram-ux/releases/tag/v0.2.0-beta.1) · [安装指南](docs/installation.md) · [文档](docs/README.md) · [问题反馈](https://github.com/pler1y/openclaw-telegram-ux/issues)
+[下载 Beta 安装包](https://github.com/pler1y/openclaw-telegram-ux/releases/tag/v0.2.0-beta.1) · [快速开始](#快速开始) · [文档导航](docs/README.md) · [问题反馈](https://github.com/pler1y/openclaw-telegram-ux/issues)
+
+**当前版本：0.2.0-beta.1，适配 OpenClaw 2026.9.1。** 已有可正常回复的 Telegram 机器人后，按下方步骤安装。
+
+使用 **OpenClaw** 请选择本项目；使用 **Hermes Agent** 请前往 [Hermes Telegram UX](https://github.com/pler1y/hermes-telegram-ux)。两个插件分别安装，具体能力见[项目对照](docs/hermes-comparison.md)。
 
 ## 使用体验
 
@@ -101,6 +105,12 @@ openclaw gateway restart
 菜单显示和设置命令已实测，按钮点击与续问仍待实机补验。压缩和后台任务的展示适配已有自动化覆盖，但已测模型路径尚未触发相应公开事件。具体工作说明由模型决定是否提供，未调用进度工具时继续显示真实阶段。
 
 [兼容性与限制](docs/compatibility.md) · [版本验证记录](docs/releases/0.2.0-beta.1-validation.md)
+
+## 文档与目录导航
+
+- [安装与升级](docs/installation.md)、[配置参考](docs/configuration.md)、[使用指南](docs/usage.md)：完成配置并使用日常操作。
+- [问题排查](docs/troubleshooting.md)、[维护与回滚](docs/maintenance.md)：处理运行问题、禁用或移除插件。
+- [源码目录与事件流](docs/development/architecture.md)、[完整文档索引](docs/README.md)：了解模块职责及版本记录。
 
 ## 参与开发
 

@@ -10,7 +10,11 @@
 
 OpenClaw Telegram UX is a community plugin for Telegram private chats. It acknowledges requests and updates a single status message as work proceeds. Successful tasks remove that message; OpenClaw delivers the answer and attachments as usual.
 
-[Download](https://github.com/pler1y/openclaw-telegram-ux/releases/tag/v0.2.0-beta.1) · [Documentation (中文)](docs/README.md) · [Report an issue](https://github.com/pler1y/openclaw-telegram-ux/issues)
+[Download beta](https://github.com/pler1y/openclaw-telegram-ux/releases/tag/v0.2.0-beta.1) · [Quick start](#quick-start) · [Documentation (中文)](docs/README.md) · [Report an issue](https://github.com/pler1y/openclaw-telegram-ux/issues)
+
+**Current version: 0.2.0-beta.1 for OpenClaw 2026.9.1.** Start with a working Telegram bot, then follow the installation steps below.
+
+Use this project with **OpenClaw**. For **Hermes Agent**, use [Hermes Telegram UX](https://github.com/pler1y/hermes-telegram-ux). The plugins install separately; see the [feature comparison (中文)](docs/hermes-comparison.md) for their different capabilities.
 
 ## What it looks like
 
@@ -99,6 +103,14 @@ Live validation currently covers OpenClaw 2026.9.1, xai/grok-4.6, and one author
 Menu rendering and setting commands have been tested live. Button callbacks and follow-up submission still need live acceptance. Compaction and background-task adapters have automated coverage, but the tested model path did not emit their public events. Specific activity descriptions are optional model tool calls; event-based phases remain available when the model does not provide one.
 
 The release includes [validation evidence (中文)](docs/releases/0.2.0-beta.1-validation.md). See [compatibility (中文)](docs/compatibility.md) for the full support boundary.
+
+## Documentation and repository map
+
+- [Installation and upgrades](docs/installation.md), [configuration](docs/configuration.md), and [usage](docs/usage.md): set up the plugin and use everyday controls.
+- [Troubleshooting](docs/troubleshooting.md) and [maintenance and rollback](docs/maintenance.md): diagnose issues, disable, or remove the plugin.
+- [Source map and event flow](docs/development/architecture.md) and the [documentation index](docs/README.md): explore modules and release records.
+
+The user guides and documentation index are currently in Chinese; the architecture guide is in English.
 
 ## Contributing
 
