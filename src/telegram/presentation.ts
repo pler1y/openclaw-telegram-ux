@@ -3,7 +3,7 @@ import type { Phase, TaskState } from "../core/state.js";
 export type Language = "zh" | "en";
 export type ProgressStyle = "compact" | "detailed";
 export interface Preferences { language: Language; progressStyle: ProgressStyle }
-export const VERSION = "0.2.0-beta.1";
+export const VERSION = "0.2.0-beta.2";
 export const textOf = (language: Language, zh: string, en: string): string => language === "en" ? en : zh;
 
 const labels: Record<Language, Record<Phase, string>> = {

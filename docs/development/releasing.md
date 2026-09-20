@@ -29,7 +29,7 @@ Use the generated archive as the first argument. Supplying a baseline archive al
 
 ```sh
 TGUX_ARTIFACTS_DIR=artifacts/check node scripts/install-check.mjs \
-  artifacts/check/openclaw-telegram-ux-0.2.0-beta.1.tgz \
+  artifacts/check/openclaw-telegram-ux-0.2.0-beta.2.tgz \
   artifacts/openclaw-telegram-ux-0.1.0-beta.1.tgz
 ```
 

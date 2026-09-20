@@ -1,6 +1,6 @@
 # 更新日志 / Changelog
 
-## Unreleased
+## [0.2.0-beta.2](https://github.com/pler1y/openclaw-telegram-ux/releases/tag/v0.2.0-beta.2) — 2026-09-20
 
 - 整理中英文首页、安装与配置示例、用户文档、贡献指南和版本验证记录。
 - 按任务核心、OpenClaw、Telegram 和存储职责组织源码；运行逻辑不变。
