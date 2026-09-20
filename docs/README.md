@@ -26,6 +26,7 @@
 ## 对照与版本证据
 
 - [与 Hermes Telegram UX 的对照](hermes-comparison.md)
+- [0.2.0-beta.2 发布与验证](releases/0.2.0-beta.2-validation.md)
 - [0.2.0-beta.1 验证报告](releases/0.2.0-beta.1-validation.md)
 - [0.2.0-beta.1 上架准备记录](releases/0.2.0-beta.1-publishing.md)
 - [GitHub Releases](https://github.com/pler1y/openclaw-telegram-ux/releases)：安装包、校验值和脱敏证据

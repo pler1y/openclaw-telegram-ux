@@ -2,7 +2,7 @@
   "id": "openclaw-telegram-ux",
   "name": "OpenClaw Telegram UX",
   "description": "Telegram 私聊回执、具体进度、双语与交互菜单",
-  "version": "0.2.0-beta.1",
+  "version": "0.2.0-beta.2",
   "activation": {
     "onStartup": true
   },

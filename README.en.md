@@ -10,9 +10,9 @@
 
 OpenClaw Telegram UX is a community plugin for Telegram private chats. It acknowledges requests and updates a single status message as work proceeds. Successful tasks remove that message; OpenClaw delivers the answer and attachments as usual.
 
-[Download beta](https://github.com/pler1y/openclaw-telegram-ux/releases/tag/v0.2.0-beta.1) · [Quick start](#quick-start) · [Documentation (中文)](docs/README.md) · [Report an issue](https://github.com/pler1y/openclaw-telegram-ux/issues)
+[Download beta](https://github.com/pler1y/openclaw-telegram-ux/releases/tag/v0.2.0-beta.2) · [Quick start](#quick-start) · [Documentation (中文)](docs/README.md) · [Report an issue](https://github.com/pler1y/openclaw-telegram-ux/issues)
 
-**Current version: 0.2.0-beta.1 for OpenClaw 2026.9.1.** Start with a working Telegram bot, then follow the installation steps below.
+**Current version: 0.2.0-beta.2 for OpenClaw 2026.9.1.** Start with a working Telegram bot, then follow the installation steps below.
 
 Use this project with **OpenClaw**. For **Hermes Agent**, use [Hermes Telegram UX](https://github.com/pler1y/hermes-telegram-ux). The plugins install separately; see the [feature comparison (中文)](docs/hermes-comparison.md) for their different capabilities.
 
@@ -36,14 +36,14 @@ The plugin uses the public OpenClaw SDK and Telegram Bot API. It installs indepe
 
 ## Quick start
 
-Current release: **0.2.0-beta.1**. Requires **OpenClaw 2026.9.1**, **Node.js ≥ 24.16.0**, a working Telegram bot, and an already authorized private chat. Other OpenClaw versions are not supported yet.
+Current release: **0.2.0-beta.2**. Requires **OpenClaw 2026.9.1**, **Node.js ≥ 24.16.0**, a working Telegram bot, and an already authorized private chat. Other OpenClaw versions are not supported yet.
 
 ### 1. Download and install
 
-Download `openclaw-telegram-ux-0.2.0-beta.1.tgz` and `SHA256SUMS` from the [release page](https://github.com/pler1y/openclaw-telegram-ux/releases/tag/v0.2.0-beta.1). Wait for active tasks to finish, back up your configuration, and check the archive checksum.
+Download `openclaw-telegram-ux-0.2.0-beta.2.tgz` and `SHA256SUMS` from the [release page](https://github.com/pler1y/openclaw-telegram-ux/releases/tag/v0.2.0-beta.2). Wait for active tasks to finish, back up your configuration, and check the archive checksum.
 
 ```sh
-openclaw plugins install npm-pack:./openclaw-telegram-ux-0.2.0-beta.1.tgz --accept-capabilities
+openclaw plugins install npm-pack:./openclaw-telegram-ux-0.2.0-beta.2.tgz --accept-capabilities
 ```
 
 ### 2. Configure your private chat
@@ -102,7 +102,7 @@ Live validation currently covers OpenClaw 2026.9.1, xai/grok-4.6, and one author
 
 Menu rendering and setting commands have been tested live. Button callbacks and follow-up submission still need live acceptance. Compaction and background-task adapters have automated coverage, but the tested model path did not emit their public events. Specific activity descriptions are optional model tool calls; event-based phases remain available when the model does not provide one.
 
-The release includes [validation evidence (中文)](docs/releases/0.2.0-beta.1-validation.md). See [compatibility (中文)](docs/compatibility.md) for the full support boundary.
+The release includes [validation evidence (中文)](docs/releases/0.2.0-beta.2-validation.md). See [compatibility (中文)](docs/compatibility.md) for the full support boundary.
 
 ## Documentation and repository map
 

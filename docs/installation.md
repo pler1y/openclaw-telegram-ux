@@ -27,9 +27,9 @@ chmod 600 "$TGUX_BACKUP_DIR/openclaw.json.before"
 
 ## 2. 下载并校验
 
-从 [v0.2.0-beta.1 Release](https://github.com/pler1y/openclaw-telegram-ux/releases/tag/v0.2.0-beta.1) 下载：
+从 [v0.2.0-beta.1 Release](https://github.com/pler1y/openclaw-telegram-ux/releases/tag/v0.2.0-beta.2) 下载：
 
-- `openclaw-telegram-ux-0.2.0-beta.1.tgz`
+- `openclaw-telegram-ux-0.2.0-beta.2.tgz`
 - `SHA256SUMS`
 
 Linux 可在下载目录验证已下载文件：
@@ -41,7 +41,7 @@ sha256sum --ignore-missing --check SHA256SUMS
 macOS 可运行以下命令，把结果与 `SHA256SUMS` 中安装包对应的一行比较：
 
 ```sh
-shasum -a 256 openclaw-telegram-ux-0.2.0-beta.1.tgz
+shasum -a 256 openclaw-telegram-ux-0.2.0-beta.2.tgz
 ```
 
 `Source code (zip/tar.gz)` 是源码快照；直接安装请使用单独上传的 `.tgz` 插件包。
@@ -49,7 +49,7 @@ shasum -a 256 openclaw-telegram-ux-0.2.0-beta.1.tgz
 ## 3. 安装插件
 
 ```sh
-openclaw plugins install npm-pack:./openclaw-telegram-ux-0.2.0-beta.1.tgz --accept-capabilities
+openclaw plugins install npm-pack:./openclaw-telegram-ux-0.2.0-beta.2.tgz --accept-capabilities
 ```
 
 首次安装会保留为待配置状态。接下来合并[默认账号示例](../examples/openclaw.default.json)或[命名账号示例](../examples/openclaw.named-account.json)，替换聊天 ID 和机器人用户名。示例是配置片段，保留现有模型、凭据和其他配置字段。
@@ -81,7 +81,7 @@ openclaw health --json
 阅读目标版本的更新日志并确认兼容性，按前述步骤备份、校验下载包，在空闲时带 `--force` 安装：
 
 ```sh
-openclaw plugins install npm-pack:./openclaw-telegram-ux-0.2.0-beta.1.tgz --force --accept-capabilities
+openclaw plugins install npm-pack:./openclaw-telegram-ux-0.2.0-beta.2.tgz --force --accept-capabilities
 openclaw config validate
 openclaw gateway restart
 ```
